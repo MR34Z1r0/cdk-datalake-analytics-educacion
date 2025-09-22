@@ -70,7 +70,7 @@ logger.info(f"instance: {INSTANCIAS}")
 
 DOMAIN_LAYER = "domain"
 ANALYTICS_LAYER = "analytics"
-STAGE_LAYER_BIGMAGIC = "bigmagic" # BigMagic data source
+STAGE_LAYER_UPEU = "upeu" # BigMagic data source
 
 INSTANCES = INSTANCIAS.split(",")
 
@@ -81,7 +81,7 @@ sns_client = boto3.client("sns")
 
 class data_paths:
     ANALYTICS = f"{S3_PATH_ANALYTICS}{BUSINESS_PROCESS}/"
-    BIGMAGIC = f"{S3_PATH_STG}{STAGE_LAYER_BIGMAGIC}/"
+    UPEU = f"{S3_PATH_STG}{STAGE_LAYER_UPEU}/"
     EXTERNAL = f"{S3_PATH_EXTERNAL}"
     ARTIFACTS_CSV = f"{S3_PATH_ARTIFACTS_CSV}"
     
