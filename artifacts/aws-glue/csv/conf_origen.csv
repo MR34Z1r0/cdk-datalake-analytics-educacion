@@ -1,0 +1,12 @@
+id_pais;nombre_tabla;nombre_origen;nombre_origen_erp
+PE;m_asignacion_modulo;bigmagic;bigmagic
+PE;m_eje_territorial;bigmagic;bigmagic
+PE;m_estructura_comercial;bigmagic;bigmagic
+PE;m_modulo;bigmagic;bigmagic
+PE;m_modelo_atencion;bigmagic;bigmagic
+PE;t_visita;bigmagic;bigmagic
+PE;m_forma_pago;bigmagic;bigmagic
+PE;m_lista_precio;bigmagic;bigmagic
+PE;m_fuerza_venta;bigmagic;bigmagic
+PE;m_responsable_comercial;bigmagic;bigmagic
+PE;m_clasificacion_cliente;bigmagic;bigmagic

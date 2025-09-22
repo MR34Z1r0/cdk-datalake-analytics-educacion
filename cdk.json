@@ -1,0 +1,105 @@
+{
+  "app": "python app.py",
+  "watch": {
+    "include": [
+      "**"
+    ],
+    "exclude": [
+      "README.md",
+      "cdk*.json",
+      "requirements*.txt",
+      "source.bat",
+      "**/__init__.py",
+      "**/__pycache__",
+      "tests"
+    ]
+  },
+  "context": {
+    "project_config": {
+      "enterprise": "sofia",
+      "project_name": "datalake",
+      "project_description": "Datalake Analytics Educacion",
+      "author": "Miguel Espinoza Alvarez",
+      "email": "mespinoza1388@gmail.com",
+      "version": "1.0.0",
+      "app_config": {
+        "dev": {
+          "artifacts": {
+            "local": "./artifacts",
+            "aws_lambda_layers": {
+              "layer_aje_libs": "arn:aws:lambda:${region}:${account}:layer:layer_aje_libs:3",
+              "layer_powertools": "arn:aws:lambda:${region}:017000801446:layer:AWSLambdaPowertoolsPythonV3-python313-x86_64:11",
+              "layer_pinecone": "arn:aws:lambda:${region}:${account}:layer:layer_pinecone:1",
+              "layer_docs": "arn:aws:lambda:${region}:${account}:layer:layer_docs:4",
+              "layer_requests": "arn:aws:lambda:${region}:${account}:layer:layer_requests:2",
+              "layer_pyodbc": "arn:aws:lambda:${region}:${account}:layer:layer_pyodbc:2"
+            }              
+          },
+          "topic_notifications": {
+              "failed": "sofia-dev-datalake-failed-sns",
+              "success": "sofia-dev-datalake-success-sns"
+          },
+          "sns_notifications": [
+            "mespinoza1388@gmail.com"
+          ],
+          "s3_buckets": {
+            "artifacts": "sofia-dev-datalake-509399624591-us-east-1-artifacts-s3",
+            "athena": "sofia-dev-datalake-509399624591-us-east-1-athena-s3",
+            "external": "sofia-dev-datalake-509399624591-us-east-1-external-s3",
+            "landing": "sofia-dev-datalake-509399624591-us-east-1-landing-s3",
+            "raw": "sofia-dev-datalake-509399624591-us-east-1-raw-s3",
+            "stage": "sofia-dev-datalake-509399624591-us-east-1-stage-s3",
+            "analytics": "sofia-dev-datalake-509399624591-us-east-1-analytics-s3"
+          },
+          "dynamodb_tables":{
+            "configuration": "sofia-dev-datalake-configuration-ddb",
+            "credentials": "sofia-dev-datalake-credentials-ddb",
+            "columns-specifications": "sofia-dev-datalake-columns-specifications-ddb",
+            "logs": "sofia-dev-datalake-logs-ddb"
+          },
+          "team": "genesis",
+          "business_process": "educacion",
+          "log_level": "DEBUG"
+        },
+        "prod": {
+          "artifacts": {
+            "local": "./artifacts",
+            "aws_lambda_layers": {
+              "layer_aje_libs": "arn:aws:lambda:${region}:${account}:layer:layer_aje_libs:3",
+              "layer_powertools": "arn:aws:lambda:${region}:017000801446:layer:AWSLambdaPowertoolsPythonV3-python313-x86_64:11",
+              "layer_pinecone": "arn:aws:lambda:${region}:${account}:layer:layer_pinecone:1",
+              "layer_docs": "arn:aws:lambda:${region}:${account}:layer:layer_docs:4",
+              "layer_requests": "arn:aws:lambda:${region}:${account}:layer:layer_requests:2",
+              "layer_pyodbc": "arn:aws:lambda:${region}:${account}:layer:layer_pyodbc:2"
+            }              
+          },
+          "topic_notifications": {
+              "failed": "sofia-prod-datalake-failed-sns",
+              "success": "sofia-prod-datalake-success-sns"
+          },
+          "sns_notifications": [
+            "mespinoza1388@gmail.com"
+          ],
+          "s3_buckets": {
+            "artifacts": "sofia-566121885938-us-west-2-prod-datalake-artifacts-s3",
+            "athena": "sofia-566121885938-us-west-2-prod-datalake-athena-s3",
+            "external": "sofia-566121885938-us-west-2-prod-datalake-external-s3",
+            "landing": "sofia-566121885938-us-west-2-prod-datalake-landing-s3",
+            "raw": "sofia-566121885938-us-west-2-prod-datalake-raw-s3",
+            "stage": "sofia-566121885938-us-west-2-prod-datalake-stage-s3",
+            "analytics": "sofia-566121885938-us-west-2-prod-datalake-analytics-s3"
+          },
+          "dynamodb_tables":{
+            "configuration": "sofia-prod-datalake-configuration-ddb",
+            "credentials": "sofia-prod-datalake-credentials-ddb",
+            "columns-specifications": "sofia-prod-datalake-columns-specifications-ddb",
+            "logs": "sofia-prod-datalake-logs-ddb"
+          },
+          "team": "genesis",
+          "business_process": "comercial",
+          "log_level": "DEBUG"
+        }
+      }
+    }
+  }
+}

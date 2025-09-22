@@ -1,0 +1,17 @@
+id;layer;procedure;glue_version;worker_type;num_workers;exe_order;process_id;periods
+1;comercial;dim_clasificacion_cliente;4;G.1X;2;1;10;2
+2;comercial;dim_eje_territorial;4;G.1X;2;1;10;2
+3;comercial;dim_estructura_comercial;4;G.1X;2;1;10;2
+4;comercial;dim_pais;4;G.1X;2;1;10;2
+5;comercial;dim_vendedor;4;G.1X;2;1;10;2
+6;comercial;dim_cliente;4;G.1X;2;2;10;2
+7;comercial;dim_forma_pago;4;G.1X;2;2;10;2
+8;comercial;dim_fuerza_venta;4;G.1X;2;2;10;2
+9;comercial;dim_lista_precio;4;G.1X;2;2;10;2
+10;comercial;dim_producto;4;G.1X;2;2;10;2
+11;comercial;dim_origen_pedido;4;G.1X;2;3;10;2
+12;comercial;dim_sucursal;4;G.1X;2;3;10;2
+13;comercial;dim_tipo_pedido;4;G.1X;2;3;10;2
+14;comercial;dim_tipo_venta;4;G.1X;2;3;10;2
+15;comercial;fact_venta_cliente_historico;4;G.1X;4;4;10;100
+16;comercial;fact_venta_detalle;4;G.1X;4;4;10;100
