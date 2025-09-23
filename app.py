@@ -86,7 +86,7 @@ base_stack_outputs = {
     "LambdaRoleArn": base_stack.lambda_role.role_arn,
     "LambdaGetDataArn": base_stack.lambda_get_data.function_arn,
     "AnalyticsCoreBaseStepFunctionArn": base_stack.analytics_core_base_step_function.state_machine_arn,
-    "AnalyticsCoreDomainCrawlerJobName": base_stack.analytics_core_domain_crawler_job_name,
+    "AnalyticsCoreEducacionCrawlerJobName": base_stack.analytics_core_domain_crawler_job_name,
     "InvokeNextLayerLambdaFunctionArn": base_stack.invoke_next_layer_lambda_function.function_arn,
     "InvokeNextLayerLambdaFunctionName": base_stack.invoke_next_layer_lambda_function.function_name,
 }

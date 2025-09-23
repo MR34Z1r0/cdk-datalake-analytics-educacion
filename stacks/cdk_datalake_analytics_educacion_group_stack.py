@@ -89,7 +89,7 @@ class CdkDatalakeAnalyticsEducacionGroupStack(Stack):
         self.invoke_next_layer_lambda_function = _lambda.Function.from_function_arn(self, "InvokeNextLayerLambdaFunction", self.base_stack_outputs["InvokeNextLayerLambdaFunctionArn"])
 
         # Analytics Core Resources  
-        self.analytics_core_domain_crawler_job_name = self.base_stack_outputs["AnalyticsCoreDomainCrawlerJobName"]
+        self.analytics_core_domain_crawler_job_name = self.base_stack_outputs["AnalyticsCoreEducacionCrawlerJobName"]
 
         # S3 path for Spark events
         self.s3_path_spark = f"s3://{self.s3_artifacts_bucket.bucket_name}/aws-glue/spark-events"

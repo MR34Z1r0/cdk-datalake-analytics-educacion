@@ -73,9 +73,8 @@ NOW_LIMA = dt.datetime.now(pytz.utc).astimezone(TZ_LIMA)
 
 logger.info(f"project name: {PROJECT_NAME} | flow name:  {FLOW_NAME} | process name: {PROCESS_NAME}")
 logger.info(f"instance: {INSTANCE} | periods: {PERIODS} | table name: {TABLE_NAME}")
-
-DOMAIN_LAYER = 'domain'
-EDUCACION_LAYER = 'educacion'
+ 
+ANALYTICS_LAYER = 'educacion'
 STAGE_LAYER_UPEU = 'upeu' # UPEU data source
 STAGE_LAYER_SALESFORCE = 'salesforce'
 
@@ -97,8 +96,7 @@ sns_client = boto3.client('sns')
 dynamodb_resource = boto3.resource('dynamodb')
 
 class data_paths:
-    DOMAIN = f'{S3_PATH_ANALYTICS}{DOMAIN_LAYER}/'
-    EDUCACION = f'{S3_PATH_ANALYTICS}{EDUCACION_LAYER}/'
+    ANALYTICS = f'{S3_PATH_ANALYTICS}{ANALYTICS_LAYER}/'
     UPEU = f'{S3_PATH_STG}{STAGE_LAYER_UPEU}/'
     SALESFORCE = f'{S3_PATH_STG}{STAGE_LAYER_SALESFORCE}/public/'
     EXTERNAL = f'{S3_PATH_EXTERNAL}'
@@ -106,12 +104,10 @@ class data_paths:
     ARTIFACTS_GLUE_CSV = f'{S3_PATH_ARTIFACTS}csv/'
 
     def getDataPath(self, layer):
-        if layer.upper() == 'DOMAIN':
-            return self.DOMAIN
+        if layer.upper() == 'ANALYTICS':
+            return self.ANALYTICS
         elif layer.upper() == 'UPEU':
             return self.UPEU
-        elif layer.upper() == 'EDUCACION':
-            return self.EDUCACION
         else:
             raise ValueError(f'Layer {layer} not found')
 
@@ -316,7 +312,7 @@ class SPARK_CONTROLLER:
                     logger.info(f"Using default CSV options (delimiter=';', header=true); path: {s3_path}")
                     df = self.spark.read.format("csv").option("sep", ";").option("header", "true").load(s3_path)
 
-            elif path == data_paths.BIGMAGIC:
+            elif path == data_paths.UPEU:
                 # Use domain-specific configuration path for credentials.csv
                 schema_path = f"{S3_PATH_STAGE_CSV}credentials.csv"
                 logger.info(f"Loading credentials schema from: {schema_path}")
@@ -373,7 +369,7 @@ class SPARK_CONTROLLER:
                     )
                     LOGGING_UTILS.add_log_to_dynamodb(log_record)
 
-                    df = self._create_empty_dataframe_from_csv(TEAM, STAGE_LAYER_BIGMAGIC, table_name)
+                    df = self._create_empty_dataframe_from_csv(TEAM, STAGE_LAYER_UPEU, table_name)
                     logger.info(f"Created empty DataFrame for {table_name} with schema from CSV")
                 else:
                     # Unir todos los DataFrames en uno solo si hay más de una carpeta
@@ -964,7 +960,7 @@ class LOGGING_UTILS:
         truncated_message = message[:2000] + "...[TRUNCATED]" if len(message) > 2000 else message
 
         return {
-            "PROCESS_ID": f"{TEAM}-{STAGE_LAYER_BIGMAGIC}-{FLOW_NAME}",
+            "PROCESS_ID": f"{TEAM}-{STAGE_LAYER_UPEU}-{FLOW_NAME}",
             "DATE_SYSTEM": dt.datetime.now(pytz.utc).astimezone(TZ_LIMA).strftime("%Y%m%d_%H%M%S"),
             "RESOURCE_NAME": JOB_NAME,
             "RESOURCE_TYPE": "glue_job",
@@ -973,7 +969,7 @@ class LOGGING_UTILS:
             "PROCESS_TYPE": LOAD_TYPE,
             "CONTEXT": log_context,
             "TEAM": TEAM,
-            "DATASOURCE": STAGE_LAYER_BIGMAGIC,
+            "DATASOURCE": STAGE_LAYER_UPEU,
             "TABLE_NAME": TABLE_NAME,
             "ENVIRONMENT": ENVIRONMENT,
         }

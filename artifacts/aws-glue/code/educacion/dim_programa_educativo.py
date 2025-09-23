@@ -12,7 +12,7 @@ try:
     logger.info("Reading tables from UPEU (Stage layer)")
     
     # Tabla principal ProgramasEducativo (equivalente a temp.ProgramasEducativo)
-    df_programas_educativo = spark_controller.read_table(data_paths.UPEU, "programas_educativo")
+    df_programaseducativo = spark_controller.read_table(data_paths.UPEU, "programaseducativo")
     
     logger.info("Tables loaded successfully from UPEU")
 except Exception as e:
@@ -21,10 +21,10 @@ except Exception as e:
 
 try:
     # Aplicar la lógica del MERGE SQL - crear el dataset origen
-    logger.info("Starting transformations - creating dim_programa_educativo from programas_educativo")
+    logger.info("Starting transformations - creating dim_programa_educativo from programaseducativo")
     
     df_dim_programa_educativo = (
-        df_programas_educativo
+        df_programaseducativo
         .select(
             col("id").cast(IntegerType()).alias("id_programa_educativo"),
             col("nombre").cast(StringType()).alias("nomb_programa_educativo"),

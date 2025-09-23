@@ -12,7 +12,7 @@ try:
     logger.info("Reading tables from UPEU (Stage layer)")
     
     # Tabla principal AnioAcademico (equivalente a temp.AnioAcademico)
-    df_anio_academico = spark_controller.read_table(data_paths.UPEU, "anio_academico")
+    df_anioacademico = spark_controller.read_table(data_paths.UPEU, "anioacademico")
     
     logger.info("Tables loaded successfully from UPEU")
 except Exception as e:
@@ -21,10 +21,10 @@ except Exception as e:
 
 try:
     # Aplicar la lógica del MERGE SQL - crear el dataset origen
-    logger.info("Starting transformations - creating dim_anio_academico from anio_academico")
+    logger.info("Starting transformations - creating dim_anio_academico from anioacademico")
     
-    df_dim_anio_academico = (
-        df_anio_academico.alias("p")
+    df_dim_anioacademico = (
+        df_anioacademico.alias("p")
         .select(
             col("p.id").cast(IntegerType()).alias("id_anio_academico"),
             col("p.nombre").cast(StringType()).alias("nomb_anio_academico"),
@@ -43,7 +43,7 @@ try:
     partition_columns_array = []  # Sin partición específica, puedes agregar si necesitas
     
     logger.info(f"Starting upsert of {target_table_name}")
-    spark_controller.upsert(df_dim_anio_academico, data_paths.ANALYTICS, target_table_name, id_columns, partition_columns_array)
+    spark_controller.upsert(df_dim_anioacademico, data_paths.ANALYTICS, target_table_name, id_columns, partition_columns_array)
     logger.info(f"Upsert de {target_table_name} success completed")
     
 except Exception as e:

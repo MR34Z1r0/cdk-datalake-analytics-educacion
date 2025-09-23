@@ -85,7 +85,7 @@ class CdkDatalakeAnalyticsEducacionBaseStack(Stack):
         self.analytics_core_base_step_function = sfn.StateMachine.from_state_machine_arn(self, "AnalyticsCoreBaseStepFunction", cdk.Fn.import_value("AnalyticsCoreStepFunctionBaseGlueArn"))
 
         # Import analytics-core domain crawler job name
-        self.analytics_core_domain_crawler_job_name = cdk.Fn.import_value("AnalyticsCoreDomainCrawlerJobName")
+        self.analytics_core_domain_crawler_job_name = cdk.Fn.import_value("AnalyticsCoreEducacionCrawlerJobName")
 
         self.process_matrix_s3_path = cdk.Fn.import_value("AnalyticsCoreProcessMatrixS3Path")
 
@@ -314,7 +314,7 @@ class CdkDatalakeAnalyticsEducacionBaseStack(Stack):
 
         # Analytics Core imports
         cdk.CfnOutput(self, "AnalyticsCoreBaseStepFunctionArn", value=self.analytics_core_base_step_function.state_machine_arn)
-        cdk.CfnOutput(self, "AnalyticsCoreDomainCrawlerJobName", value=self.analytics_core_domain_crawler_job_name)
+        cdk.CfnOutput(self, "AnalyticsCoreEducacionCrawlerJobName", value=self.analytics_core_domain_crawler_job_name)
 
     def _load_instances_configuration(self):
         """Load and filter instances configuration from CSV"""
