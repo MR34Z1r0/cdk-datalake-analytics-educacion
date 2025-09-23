@@ -12,7 +12,7 @@ try:
     logger.info("Reading tables from UPEU (Stage layer)")
     
     # Tabla principal GeoReferencias (equivalente a temp.GeoReferencias)
-    df_geo_referencias = spark_controller.read_table(data_paths.UPEU, "geo_referencias")
+    df_georeferencias = spark_controller.read_table(data_paths.UPEU, "georeferencias")
     
     logger.info("Tables loaded successfully from UPEU")
 except Exception as e:
@@ -21,10 +21,10 @@ except Exception as e:
 
 try:
     # Aplicar la lógica del MERGE SQL - crear el dataset origen
-    logger.info("Starting transformations - creating dim_escuela from geo_referencias")
+    logger.info("Starting transformations - creating dim_escuela from georeferencias")
     
     df_dim_escuela = (
-        df_geo_referencias
+        df_georeferencias
         .select(
             col("id").cast(IntegerType()).alias("id_escuela"),
             col("name").cast(StringType()).alias("nomb_escuela"),

@@ -9,7 +9,7 @@ from awsglue.dynamicframe import DynamicFrame
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col
 import json
-from common_jobs_functions import logger, SPARK_CONTROLLER, data_paths, COD_PAIS
+from common_jobs_functions import logger, SPARK_CONTROLLER, data_paths, ENVIRONMENT
 
 spark_controller = SPARK_CONTROLLER()
 data_paths_instance = data_paths()
@@ -28,10 +28,7 @@ args = getResolvedOptions(
 
 CATALOG_CONNECTION = args["CATALOG_CONNECTION"]
 ERROR_TOPIC_ARN = args["ERROR_TOPIC_ARN"]
-PROCESS_NAME = args["PROCESS_NAME"]
-REGION_NAME = args["REGION_NAME"]
 LOAD_PROCESS = args["LOAD_PROCESS"]
-ORIGIN = args["ORIGIN"]
 
 # e.g. ["10"] -> into list ["10"]
 LOAD_PROCESS_LIST = LOAD_PROCESS.split(",")
@@ -46,7 +43,7 @@ except Exception as e:
     raise
 
 try:
-    cod_pais = COD_PAIS.split(",")
+    cod_pais = spark_controller.get_cod_pais_list_from_credentials()
     url, properties = spark_controller.get_catalog_connection_redshift(CATALOG_CONNECTION)
     for tables_list_details in TABLE_LIST:
         for table_details in tables_list_details:
@@ -56,11 +53,7 @@ try:
                 table_layer = table_details["layer"]
                 periods_filter=[]
                 print(f"Table: {table_name}, Periods: {table_periods}")
-                if "dominio" in table_layer:
-                    continue
-                if ORIGIN == "IN" and "_" in table_layer:
-                    continue
-                if ORIGIN == "ECONORED" and "econored" not in table_layer:
+                if "comercial" not in table_layer:
                     continue
 
                 #Get table PATH
@@ -71,7 +64,7 @@ try:
                 if not (table_name.startswith("m_") or table_name.startswith("dim_")):
                     periods_filter = spark_controller.get_periods(periods=table_periods)
                     df = df.filter(col("id_periodo").isin(periods_filter))
-                redshift_table_name = f"{table_layer}_analytics_prod.{table_name}"
+                redshift_table_name = f"{table_layer}_analytics_{ENVIRONMENT.lower()}.{table_name}"
                 print(redshift_table_name)
                 spark_controller.load_to_redshift(df, properties, url, redshift_table_name, cod_pais, periods_filter)
             except Exception as e:

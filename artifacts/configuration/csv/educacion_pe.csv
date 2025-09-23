@@ -1,0 +1,15 @@
+id;layer;procedure;glue_version;worker_type;num_workers;exe_order;process_id;periods
+1;educacion;dim_alumno;4;G.1X;2;1;10;2
+2;educacion;dim_anio_academico;4;G.1X;2;1;10;2
+3;educacion;dim_curso;4;G.1X;2;1;10;2
+4;educacion;dim_docente;4;G.1X;2;1;10;2
+5;educacion;dim_escuela;4;G.1X;2;1;10;2
+6;educacion;dim_facultad;4;G.1X;2;1;10;2
+7;educacion;dim_grupo;4;G.1X;2;2;10;2
+8;educacion;dim_periodo_academico;4;G.1X;2;2;10;2
+9;educacion;dim_periodo;4;G.1X;2;2;10;2
+10;educacion;dim_programa_educativo;4;G.1X;2;2;10;2
+11;educacion;dim_universidad;4;G.1X;2;2;10;2
+12;educacion;fact_sesion_detalle;4;G.1X;2;3;10;100
+13;educacion;fact_silabo_unidad_rubrica;4;G.1X;2;3;10;100
+14;educacion;fact_unidad_detalle;4;G.1X;2;3;10;100
