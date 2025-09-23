@@ -2,7 +2,7 @@ import datetime as dt
 from common_jobs_functions import logger, SPARK_CONTROLLER, data_paths
 from pyspark.sql.functions import (
     col, lit, when, concat, trim, row_number, lower, coalesce, cast, concat_ws, current_date,
-    sum, count, countDistinct, isnull, isNull, desc, asc, max, expr
+    sum, count, countDistinct, isnull, desc, asc, max, expr
 )
 from pyspark.sql.types import StringType, DateType, IntegerType, DecimalType, TimestampType
 from pyspark.sql.window import Window
@@ -201,14 +201,13 @@ try:
         )
     )
 
-    # Escribir a analytics usando upsert (equivalente a INSERT/UPDATE)
-    # Como maneja tanto inserts como updates, usamos upsert
-    id_columns = ["id_silabo", "id_unidad_aprendizaje"]  # Claves principales
-    partition_columns_array = ["id_anio_academico"]  # Partición por año académico
+    # Escribir a analytics usando overwrite (equivalente a TRUNCATE + INSERT)
+    # Como es una tabla de hechos, usamos overwrite en lugar de upsert
+    partition_columns_array = []  # Sin partición según estándar de fact tables
     
-    logger.info(f"Starting upsert of {target_table_name}")
-    spark_controller.upsert(df_fact_silabo_unidad_rubrica, data_paths.ANALYTICS, target_table_name, id_columns, partition_columns_array)
-    logger.info(f"Upsert de {target_table_name} success completed")
+    logger.info(f"Starting overwrite of {target_table_name}")
+    spark_controller.write_table(df_fact_silabo_unidad_rubrica, data_paths.ANALYTICS, target_table_name, partition_columns_array)
+    logger.info(f"Overwrite de {target_table_name} success completed")
     
 except Exception as e:
     logger.error(f"Error processing fact_silabo_unidad_rubrica: {e}")

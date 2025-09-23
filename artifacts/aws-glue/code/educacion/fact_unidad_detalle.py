@@ -2,7 +2,7 @@ import datetime as dt
 from common_jobs_functions import logger, SPARK_CONTROLLER, data_paths
 from pyspark.sql.functions import (
     col, lit, when, concat, trim, row_number, lower, coalesce, cast, concat_ws, current_date,
-    sum, count, countDistinct, isnull, isNull, desc, asc, max, expr, broadcast
+    sum, count, countDistinct, isnull, desc, asc, max, expr, broadcast
 )
 from pyspark.sql.types import StringType, DateType, IntegerType, DecimalType, TimestampType
 from pyspark.sql.window import Window
@@ -251,11 +251,11 @@ try:
     )
 
     # PASO 4: ESCRIBIR RESULTADO
-    # Como mencionaste que NO hay partición, se elimina la partición
-    partition_columns_array = []  # Sin partición según tu indicación
+    # Como es una tabla de hechos, usamos write_table con overwrite en lugar de upsert
+    partition_columns_array = []  # Sin partición según estándar de fact tables
     
     logger.info(f"Starting overwrite of {target_table_name} (sin partición)")
-    spark_controller.overwrite(df_fact_unidad_detalle, data_paths.ANALYTICS, target_table_name, partition_columns_array)
+    spark_controller.write_table(df_fact_unidad_detalle, data_paths.ANALYTICS, target_table_name, partition_columns_array)
     logger.info(f"Overwrite de {target_table_name} success completed")
     
 except Exception as e:

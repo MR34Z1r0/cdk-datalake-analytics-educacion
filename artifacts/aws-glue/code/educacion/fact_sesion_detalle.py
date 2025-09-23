@@ -2,7 +2,7 @@ import datetime as dt
 from common_jobs_functions import logger, SPARK_CONTROLLER, data_paths
 from pyspark.sql.functions import (
     col, lit, when, concat, trim, row_number, lower, coalesce, cast, concat_ws, current_date,
-    sum, count, countDistinct, isnull, isNull, desc, asc, max, expr
+    sum, count, countDistinct, isnull, desc, asc, max, expr
 )
 from pyspark.sql.types import StringType, DateType, IntegerType, DecimalType, TimestampType
 from pyspark.sql.window import Window
@@ -409,14 +409,12 @@ try:
         .orderBy(col("mua.nrounidad"), col("msa.nrosesion"))
     )
 
-    # Escribir a analytics usando insert/overwrite (equivalente a TRUNCATE + INSERT)
-    # Como es una tabla de hechos, usamos overwrite en lugar de upsert
-    id_columns = ["id_sesion_aprendizaje"]  # Clave principal
-    partition_columns_array = ["id_anio_academico"]  # Partición por año académico
+    # Escribir a analytics usando overwrite (equivalente a TRUNCATE + INSERT)
+    # Como es una tabla de hechos, usamos write_table con overwrite en lugar de upsert
+    partition_columns_array = []  # Sin partición según estándar de fact tables
     
     logger.info(f"Starting overwrite of {target_table_name}")
-    # Para fact tables, normalmente se hace overwrite completo
-    spark_controller.overwrite(df_fact_sesion_detalle, data_paths.ANALYTICS, target_table_name, partition_columns_array)
+    spark_controller.write_table(df_fact_sesion_detalle, data_paths.ANALYTICS, target_table_name, partition_columns_array)
     logger.info(f"Overwrite de {target_table_name} success completed")
     
 except Exception as e:
