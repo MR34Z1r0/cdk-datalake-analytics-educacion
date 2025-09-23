@@ -347,12 +347,26 @@ try:
             col("mpc.cursoid") == col("dcu.id_curso"),
             "left"
         )
-        .join(df_tareas, col("msa.sesionaprendizajeid").cast(IntegerType()) == col("tareas.sesionaprendizajeid"), "left")
-        .join(df_tareasentregadas, col("msa.sesionaprendizajeid").cast(IntegerType()) == col("tareasentregadas.sesionaprendizajeid"), "left")
-        .join(df_instrumentos, col("msa.sesionaprendizajeid").cast(IntegerType()) == col("instrumentos.sesionid"), "left")
-        .join(df_evidencias, col("msa.sesionaprendizajeid").cast(IntegerType()) == col("evidencias.sesionaprendizajeid"), "left")
-        .join(df_recursos, col("msa.sesionaprendizajeid").cast(IntegerType()) == col("recursos.sesionaprendizajeid"), "left")
-        .join(df_sesiontea.alias("sest"), col("msa.sesionaprendizajeid").cast(IntegerType()) == col("sest.sesionaprendizajeid"), "left")
+        # CORRECCIÓN: Usar los nombres de columna correctos sin alias inexistentes
+        .join(df_tareas.alias("tar"), 
+              col("msa.sesionaprendizajeid").cast(IntegerType()) == col("tar.sesionaprendizajeid"), "left")
+        .join(df_tareasentregadas.alias("tent"), 
+              col("msa.sesionaprendizajeid").cast(IntegerType()) == col("tent.sesionaprendizajeid"), "left")
+        .join(df_instrumentos.alias("inst"), 
+              col("msa.sesionaprendizajeid").cast(IntegerType()) == col("inst.sesionid"), "left")
+        .join(df_evidencias.alias("evid"), 
+              col("msa.sesionaprendizajeid").cast(IntegerType()) == col("evid.sesionaprendizajeid"), "left")
+        .join(df_recursos.alias("rec"), 
+              col("msa.sesionaprendizajeid").cast(IntegerType()) == col("rec.sesionaprendizajeid"), "left")
+        .join(df_sesiontea.alias("sest"), 
+              col("msa.sesionaprendizajeid").cast(IntegerType()) == col("sest.sesionaprendizajeid"), "left")
+        # LEFT JOINs para las condiciones EXISTS del SELECT
+        .join(df_evaluaciones.alias("evaluaciones"), 
+              col("msa.sesionaprendizajeid").cast(IntegerType()) == col("evaluaciones.sesionaprendizajeid"), "left")
+        .join(df_evaluacionespublicadas.alias("evaluacionespublicadas"), 
+              col("msa.sesionaprendizajeid").cast(IntegerType()) == col("evaluacionespublicadas.sesionaprendizajeid"), "left")
+        .join(df_actividades.alias("actividades"), 
+              col("msa.sesionaprendizajeid").cast(IntegerType()) == col("actividades.sesionaprendizajeid"), "left")
         .where(
             (col("msa.estadoid").cast(IntegerType()) != 299) &
             (col("mua.estadoid").cast(IntegerType()) != 295) &
@@ -380,32 +394,25 @@ try:
             when(col("msa.estadoejecucionid").cast(IntegerType()) == 317, 1).otherwise(0).alias("es_hecho"),
             when(col("evaluaciones.sesionaprendizajeid").isNotNull(), 1).otherwise(0).alias("es_evaluado"),
             when(col("msa.estadoid").cast(IntegerType()) == 297, 1).otherwise(0).alias("es_publicado"),
-            coalesce(col("recursos.cant_motivacion"), lit(0)).alias("cant_motivacion"),
-            coalesce(col("recursos.cant_guia_teorica"), lit(0)).alias("cant_guia_teorica"),
-            coalesce(col("recursos.cant_guia_practica"), lit(0)).alias("cant_guia_practica"),
-            coalesce(col("recursos.cant_guia_aprendizaje_autonomo"), lit(0)).alias("cant_guia_aprendizaje_autonomo"),
-            coalesce(col("recursos.cant_sin_clasificacion"), lit(0)).alias("cant_sin_clasificacion"),
-            coalesce(col("recursos.cant_enlaces"), lit(0)).alias("cant_enlaces"),
-            coalesce(col("recursos.cant_videos"), lit(0)).alias("cant_videos"),
-            coalesce(col("recursos.cant_archivos"), lit(0)).alias("cant_archivos"),
+            coalesce(col("rec.cant_motivacion"), lit(0)).alias("cant_motivacion"),
+            coalesce(col("rec.cant_guia_teorica"), lit(0)).alias("cant_guia_teorica"),
+            coalesce(col("rec.cant_guia_practica"), lit(0)).alias("cant_guia_practica"),
+            coalesce(col("rec.cant_guia_aprendizaje_autonomo"), lit(0)).alias("cant_guia_aprendizaje_autonomo"),
+            coalesce(col("rec.cant_sin_clasificacion"), lit(0)).alias("cant_sin_clasificacion"),
+            coalesce(col("rec.cant_enlaces"), lit(0)).alias("cant_enlaces"),
+            coalesce(col("rec.cant_videos"), lit(0)).alias("cant_videos"),
+            coalesce(col("rec.cant_archivos"), lit(0)).alias("cant_archivos"),
             coalesce(col("msa.ignorarmonitoreo").cast(IntegerType()), lit(0)).alias("es_ignorar_monitoreo"),
             col("msa.etiquetaid").cast(IntegerType()).alias("id_etiqueta"),
             when(col("evaluacionespublicadas.sesionaprendizajeid").isNotNull(), 1).otherwise(0).alias("es_eval_publicado"),
             when(col("actividades.sesionaprendizajeid").isNotNull(), 1).otherwise(0).alias("tiene_actividades"),
-            coalesce(col("tareas.totaltareas"), lit(0)).alias("tiene_tareas"),
-            coalesce(col("tareasentregadas.tiene_tareas_entregadas"), lit(0)).alias("tiene_tareas_entregadas"),
-            coalesce(col("instrumentos.totalinstrumentos"), lit(0)).alias("tiene_instrumentos"),
-            coalesce(col("evidencias.totalevidencias"), lit(0)).alias("tiene_evidenc_planf"),
-            coalesce(col("recursos.cant_recursos"), lit(0)).alias("cant_recursos"),
+            coalesce(col("tar.totaltareas"), lit(0)).alias("tiene_tareas"),
+            coalesce(col("tent.tiene_tareas_entregadas"), lit(0)).alias("tiene_tareas_entregadas"),
+            coalesce(col("inst.totalinstrumentos"), lit(0)).alias("tiene_instrumentos"),
+            coalesce(col("evid.totalevidencias"), lit(0)).alias("tiene_evidenc_planf"),
+            coalesce(col("rec.cant_recursos"), lit(0)).alias("cant_recursos"),
             coalesce(col("sest.sesion_tea"), lit(0)).alias("sesion_tea")
         )
-        # Agregamos LEFT JOINs para las condiciones EXISTS del SELECT
-        .join(df_evaluaciones.alias("evaluaciones"), 
-              col("msa.sesionaprendizajeid").cast(IntegerType()) == col("evaluaciones.sesionaprendizajeid"), "left")
-        .join(df_evaluacionespublicadas.alias("evaluacionespublicadas"), 
-              col("msa.sesionaprendizajeid").cast(IntegerType()) == col("evaluacionespublicadas.sesionaprendizajeid"), "left")
-        .join(df_actividades.alias("actividades"), 
-              col("msa.sesionaprendizajeid").cast(IntegerType()) == col("actividades.sesionaprendizajeid"), "left")
         .orderBy(col("mua.nrounidad"), col("msa.nrosesion"))
     )
 

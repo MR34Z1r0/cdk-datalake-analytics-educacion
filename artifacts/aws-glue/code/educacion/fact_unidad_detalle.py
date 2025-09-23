@@ -71,22 +71,28 @@ try:
     # PASO 2: CREAR TABLAS TEMPORALES OPTIMIZADAS
     logger.info("Creating optimized temporary tables")
     
-    # === EvaluacionesUnidad (Optimizada con selectExpr) ===
+    # === EvaluacionesUnidad (Corregida para coincidir con SQL original) ===
     logger.info("Creating temporary tables - EvaluacionesUnidad")
     df_evaluaciones_unidad = (
         df_t_rn_mae_rubro_evaluacion_proceso.alias("RubroP")
         .join(df_t_rn_mov_evaluacion_proceso.alias("Notas"),
-              col("RubroP.rubroevalprocesoid") == col("Notas.rubroevalprocesoid"), "inner")
+              col("RubroP.rubroevalprocesoid") == col("Notas.rubroevalprocesoid"), "left")
         .where(
-            (col("RubroP.estadoid").cast(IntegerType()) != 280) &
-            col("RubroP.sesionaprendizajeid").isNull() &
-            (col("Notas.nota").cast(DecimalType(4,2)) > 0)
+            (col("RubroP.tiporubroid").cast(IntegerType()) == 471) &
+            col("RubroP.sesionaprendizajeid").isNull()
         )
         .groupBy(col("RubroP.unidadaprendizajeid").cast(IntegerType()).alias("unidadaprendizajeid"))
         .agg(
-            when(count(lit(1)) > 0, 1).otherwise(0).alias("es_evaluado"),
-            when(count(when(col("RubroP.publicado").cast(IntegerType()) == 1, 1)) > 0, 1)
-            .otherwise(0).alias("es_eval_publicado")
+            max(when(
+                (col("RubroP.estadoid").cast(IntegerType()) != 280) &
+                (col("RubroP.promedio").cast(DecimalType(4,2)) > 0), 1
+            ).otherwise(0)).alias("es_evaluado"),
+            max(when(
+                (col("RubroP.estadoid").cast(IntegerType()) != 280) &
+                (col("RubroP.promedio").cast(DecimalType(4,2)) > 0) &
+                (col("Notas.publicado").cast(IntegerType()) == 1) &
+                (col("Notas.nota").cast(DecimalType(4,2)) > 0), 1
+            ).otherwise(0)).alias("es_eval_publicado")
         )
     )
     
@@ -110,11 +116,10 @@ try:
               col("Tareas.tareaid") == col("EstadoTrabajos.tareaid"), "inner")
         .where(
             (col("Tareas.estadoid").cast(IntegerType()) == 264) &
-            col("Tareas.sesionaprendizajeid").isNull() &
-            (col("EstadoTrabajos.entregado").cast(IntegerType()) == 1)
+            col("Tareas.sesionaprendizajeid").isNull()
         )
         .groupBy(col("Tareas.unidadaprendizajeid").cast(IntegerType()).alias("unidadaprendizajeid"))
-        .agg(count(lit(1)).alias("tiene_tareas_entregadas"))
+        .agg(sum(when(col("EstadoTrabajos.entregado").cast(IntegerType()) == 1, 1).otherwise(0)).alias("tiene_tareas_entregadas"))
     )
     
     # === RecursosUnidad (Optimizada) ===
